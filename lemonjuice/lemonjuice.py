@@ -8,7 +8,9 @@ import ida_netnode
 import idaapi
 import idautils
 import ida_hexrays
+from lemonjuice.config import *
 from lemonjuice.llm_index_and_query import register_llm_util, unregister_llm_util
+from lemonjuice.ns_extract import register_export_namespace_functions, unregister_export_namespace_functions
 from PyQt5.QtWidgets import QDialog, QPushButton, QCheckBox, QTextEdit, QVBoxLayout, QWidget
 from PyQt5.QtCore import QThread, pyqtSignal
 
@@ -429,6 +431,9 @@ def init_plugin():
     
     unregister_actions()
     register_actions()
+    
+    unregister_export_namespace_functions()
+    register_export_namespace_functions()
 
 
 class lemonjuice(idaapi.plugin_t):
