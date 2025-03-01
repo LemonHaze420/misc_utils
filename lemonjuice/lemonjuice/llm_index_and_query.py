@@ -8,7 +8,7 @@ import ida_hexrays
 import idc
 
 from .config import *
-from llama_index.core import Document, GPTVectorStoreIndex, ServiceContext, load_index_from_storage
+from llama_index.core import Document, GPTVectorStoreIndex, StorageContext, load_index_from_storage
 from llama_index.core.settings import Settings
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
@@ -49,14 +49,6 @@ def save_functions_to_json(filepath="functions.json"):
         json.dump(functions, f, indent=4)
 
 def create_index(data_path="functions.json"):
-    llm = Ollama(model=reasoning_model_name, temperature=0)
-    embed_model = OllamaEmbedding(
-                        model_name=embed_model_name, 
-                        base_url="http://localhost:11434", 
-                        ollama_additional_kwargs={"mirostat": 0})
-    Settings.llm = llm
-    Settings.embed_model = embed_model 
-    
     with open(data_path, "r") as f:
         functions = json.load(f)
     
@@ -119,6 +111,14 @@ class SearchFunctionsHandler(idaapi.action_handler_t):
         return idaapi.AST_ENABLE_ALWAYS
 
 def register_llm_util():
+    llm = Ollama(model=reasoning_model_name, temperature=0)
+    embed_model = OllamaEmbedding(
+                        model_name=embed_model_name, 
+                        base_url="http://localhost:11434", 
+                        ollama_additional_kwargs={"mirostat": 0})
+    Settings.llm = llm
+    Settings.embed_model = embed_model 
+
     idaapi.register_action(
         idaapi.action_desc_t(
             ACTION_LLM_INDEX,
