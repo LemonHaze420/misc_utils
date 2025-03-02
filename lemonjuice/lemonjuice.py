@@ -13,6 +13,7 @@ from lemonjuice.config import *
 from lemonjuice.llm_index_and_query import register_llm_util, unregister_llm_util
 from lemonjuice.ns_extract import register_export_namespace_functions, unregister_export_namespace_functions
 from lemonjuice.recursive_extract import register_recursive_extract, unregister_recursive_extract
+from lemonjuice.class_extract import register_class_extract, unregister_class_extract
 
 from PyQt5.QtWidgets import QDialog, QPushButton, QCheckBox, QTextEdit, QVBoxLayout, QWidget
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -440,6 +441,9 @@ def init_plugin():
     
     unregister_recursive_extract()
     register_recursive_extract()
+    
+    unregister_class_extract()
+    register_class_extract()
 
 
 class lemonjuice(idaapi.plugin_t):
