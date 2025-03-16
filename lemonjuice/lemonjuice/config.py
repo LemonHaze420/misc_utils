@@ -67,14 +67,14 @@ def get_demangled_name(ea):
     if not name:
         return "<no_name>"
 
-    demangled = ida_name.demangle_name(name, idc.get_inf_attr(idc.INF_SHORT_DN))
+    demangled = idc.demangle_name(name, idc.get_inf_attr(idc.INF_SHORT_DN))
     return demangled if demangled else name
     
     
     
 
 def collect_recursive_calls(func_ea, visited=None, skip_imports=False, skip_thunks=False):
-    if visited is None:
+    if visited is None or not isinstance(visited, set):
         visited = set()
     if func_ea in visited:
         return set()
