@@ -5,6 +5,7 @@ import idautils
 import idc
 import json
 import hashlib
+import datetime
 import os
 
 TRACKING_FILE = os.path.join(os.path.dirname(idaapi.get_path(idaapi.PATH_TYPE_IDB)), func_tracker_file)
@@ -39,7 +40,24 @@ class FunctionTracker:
         except idaapi.DecompilationFailure:
             return None
         return None
-
+        
+    def generate_metadata_cmt(self, func_ea, include_name=False, include_platform_offsets=False):
+        output = ""
+        if include_name:
+            output += f"// @name {idc.get_func_name(func_ea)}\n"
+        output += f"// @datetime {datetime.datetime.now()}\n"
+        output += f"// @exhash {self.get_hash(func_ea)}\n"
+        output += f"// @{self.get_flag(func_ea, 'status')}\n"
+        if include_platform_offsets:
+            flags = self.tracking_data.get(hex(func_ea), {}).get("flags", {})
+            platform_offsets = {k: v for k, v in flags.items() if k.endswith("_offset")}
+            for platform, offset in platform_offsets.items():
+                output += f"// {platform}: 0x{offset:X}\n"
+        return output
+        
+    def add_platform_offset(self, func_ea, platform_string_name, offset):
+        return self.set_flag(func_ea, f"{platform_string_name}_offset", offset)
+        
     def process_func(self, func):
         if isinstance(func, str):
             ea = idc.get_name_ea_simple(func)

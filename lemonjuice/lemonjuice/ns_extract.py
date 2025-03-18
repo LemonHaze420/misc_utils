@@ -17,6 +17,8 @@ def write_functions_to_directory():
     if not name:
         return
     
+    skip = ida_kernwin.ask_yn(0, "Skip already processed functions?")
+    
     Tk().withdraw()
     output_dir = askdirectory(title="Select Output Directory")
     if not output_dir:
@@ -42,12 +44,18 @@ def write_functions_to_directory():
             if not func_name.startswith(name):
                 continue
             
+            # Skip if we need to skip
+            curr_value = ft.get_hash(func_ea)
             hash_value = ft.process_func(func_ea)
+            if skip == True and (curr_value and curr_value == hash_value):
+                print(f"Skipping 0x{func_ea:X}")
+                continue
+            
             pseudocode = idaapi.decompile(func_ea)
             if not pseudocode:
                 pseudocode = f"// Failed to decompile {func_name}"
             
-            source_file.write(f"// @{ft.get_flag(func_ea, 'status')} - {hash_value}\n")
+            source_file.write(ft.generate_metadata_cmt(func_ea))
             source_file.write(f"{str(pseudocode)}\n\n")
             
             func_decl = get_func_decl(func_ea)
