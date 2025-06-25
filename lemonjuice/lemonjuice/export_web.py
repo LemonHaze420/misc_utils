@@ -1,11 +1,15 @@
 # LemonHaze - 2025
+import sys
+import os
+
 from .config import *
 from .tracking import *
-import os
+
 import re
 import hashlib
 from html import escape
 
+import ida_pro
 import ida_kernwin
 import idaapi
 import idautils
@@ -15,16 +19,8 @@ import ida_hexrays
 
 ACTION_EXPORT_WEB = "lemonutils:export_web"
 
-
 # Settings
-proj_name = re.sub(r'[^a-zA-Z0-9]', '_', idc.get_root_filename())
-
-OUTPUT_DIR = os.path.join(idaapi.get_user_idadir(), proj_name)
-FUNC_DIR = os.path.join(OUTPUT_DIR, "functions")
 MAX_BASENAME_LEN = 80
-
-os.makedirs(FUNC_DIR, exist_ok=True)
-
 
 
 def sanitize_name(name, fva):
@@ -62,7 +58,13 @@ def export_function(fva):
     return name, sname, fva
 
 
-def export_to_web():    
+def export_to_web():
+    # Init first
+    proj_name = re.sub(r'[^a-zA-Z0-9]', '_', idc.get_root_filename())
+    OUTPUT_DIR = os.path.join(idaapi.get_user_idadir(), proj_name)
+    FUNC_DIR = os.path.join(OUTPUT_DIR, "functions")
+    os.makedirs(FUNC_DIR, exist_ok=True)
+
     # Clear dirty pseudocode output and export
     ida_hexrays.clear_cached_cfuncs()
     
@@ -268,3 +270,4 @@ def register_export_web():
 
 def unregister_export_web():
     ida_kernwin.unregister_action(ACTION_EXPORT_WEB)
+    
