@@ -15,6 +15,7 @@ from lemonjuice.ns_extract import register_export_namespace_functions, unregiste
 from lemonjuice.recursive_extract import register_recursive_extract, unregister_recursive_extract
 from lemonjuice.check_hosts import register_check_hosts, unregister_check_hosts
 from lemonjuice.export_web import register_export_web, unregister_export_web
+from lemonjuice.misc_utilities import register_misc_utils, unregister_misc_utils
 #from lemonjuice.class_extract import register_class_extract, unregister_class_extract
 
 from PyQt5.QtWidgets import QDialog, QPushButton, QCheckBox, QTextEdit, QVBoxLayout, QWidget
@@ -452,6 +453,10 @@ def init_plugin():
 
     unregister_export_web()
     register_export_web()
+
+    unregister_misc_utils()
+    register_misc_utils()
+
 
 
 class lemonjuice(idaapi.plugin_t):
